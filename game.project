@@ -10,10 +10,10 @@ height = 640
 high_dpi = 1
 
 [project]
-title = ext_poki_netlib
+title = netlib_example
 
 [library]
-include_dirs = netlib
+include_dirs = netlib_ext
 
 [input]
 game_binding = /builtins/input/all.input_bindingc
