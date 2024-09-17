@@ -1,0 +1,55 @@
+function init(self)
+    -- Any random UUID is a valid game-id, but if your game is hosted at Poki you should use Poki's game-id.
+    local instance = netlib.new("33c4c5a6-ee70-4726-aa1f-ced8a9578254")
+    -- We'll use this reference later to close the network
+    self.network = instance
+
+    netlib.on(instance, netlib.EVENT_READY, function(self)
+        print("Netlib is ready!")
+        -- Need to create a lobby (e.g the player clicks on 'create game')
+        netlib.create(instance)
+
+        -- And the other client can join the lobby
+        -- network.join(code)
+
+        -- Make sure to call create() or join() only when the Network is 'ready'
+    end)
+    netlib.on(instance, netlib.EVENT_LOBBY, function(self, code, lobby_info)
+        pprint("Lobby is created", code, lobby_info)
+    end)
+    netlib.on(instance, netlib.EVENT_MESSAGE, function(self, peer_id, channel, data)
+        print("Got", #data, "bytes from", peer_id, "via", channel, "channel")
+    end)
+    netlib.on(instance, netlib.EVENT_CONNECTED, function(self, peer_id)
+        print("New peer connected", peer_id)
+        -- Send a message to the peer
+        netlib.send(instance, peer_id, netlib.CHANNEL_RELIABLE, "Welcome!")
+    end)
+    netlib.on(instance, netlib.EVENT_DISCONNECTED, function(self, peer_id)
+        print("Peer disconnected", peer_id)
+    end)
+end
+
+function final(self)
+    netlib.close(self.network)
+end
+
+function update(self, dt)
+    -- Add update code here
+    -- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+    -- Add message-handling code here
+    -- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+    -- Add input-handling code here
+    -- Remove this function if not needed
+end
+
+function on_reload(self)
+    -- Add reload-handling code here
+    -- Remove this function if not needed
+end

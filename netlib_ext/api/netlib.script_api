@@ -1,0 +1,316 @@
+- name: netlib
+  type: table
+  desc: The Poki Networking Library for Defold
+  members:
+
+  - name: new
+    type: function
+    desc: Creates a new Network instance and returns a table with methods to interact with it.
+    parameters:
+    - name: game_id
+      type: string
+      desc: UUIDv4 of the game
+    returns:
+    - name: instance
+      type: table
+
+  - name: close
+    type: function
+    desc: Closes the network instance.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: reason
+      type: string
+      desc: Optional reason for closing the network
+
+  - name: list
+    type: function
+    desc: Lists available lobbies.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: filter
+      type: table
+      desc: Optional config to filter lobbies
+      optional: true
+    - name: callback
+      type: function
+      desc: Function to be called with the result (self, err, lobbies)
+
+  - name: create
+    type: function
+    desc: Creates a new lobby.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: settings
+      type: table
+      desc: Optional settings for the lobby
+      optional: true
+    - name: callback
+      type: function
+      desc: Function to be called with the result (self, err, lobby)
+      optional: true
+
+  - name: join
+    type: function
+    desc: Joins a lobby.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: lobby
+      type: string
+      desc: The lobby code
+    - name: password
+      type: string
+      desc: Optional password for the lobby
+      optional: true
+    - name: callback
+      type: function
+      desc: Function to be called with the result (self, err, lobby_info)
+      optional: true
+
+  - name: set_lobby_settings
+    type: function
+    desc: Sets the lobby settings.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: settings
+      type: table
+      desc: The settings to set
+    - name: callback
+      type: function
+      desc: Function to be called with the result (self, err, success)
+      optional: true
+
+  - name: send
+    type: function
+    desc: Sends data to a specific peer.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: channel
+      type: number
+      desc: The channel to send the data on - CHANNEL_RELIABLE or CHANNEL_UNRELIABLE
+    - name: peer_id
+      type: string
+      desc: The ID of the peer to send the data to
+    - name: data
+      type: string
+      desc: The bytes to send
+
+  - name: broadcast
+    type: function
+    desc: Broadcasts data to all peers.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: channel
+      type: number
+      desc: The channel to broadcast the data on - CHANNEL_RELIABLE or CHANNEL_UNRELIABLE
+    - name: data
+      type: string
+      desc: The data to broadcast
+
+  - name: on
+    type: function
+    desc: Adds a listener for a specific event.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: event
+      type: number
+      desc: The event to listen for
+    - name: callback
+      type: function
+      desc: Function to be called with the result
+    returns:
+    - name: ref
+      type: number
+      desc: Reference to the callback function
+
+  - name: once
+    type: function
+    desc: Adds a listener for a specific event that will be removed after it is called.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: event
+      type: number
+      desc: The event to listen for
+    - name: callback
+      type: function
+      desc: Function to be called with the result
+    returns:
+    - name: ref
+      type: number
+      desc: Reference to the callback function
+
+  - name: off
+    type: function
+    desc: Removes a listener for a specific event.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    - name: event
+      type: number
+      desc: The event to remove the listener for
+    - name: ref
+      type: number
+      desc: Reference to the callback function. If not specified, all listeners for the event are removed.
+      optional: true
+
+  - name: peers
+    type: function
+    desc: Returns the peers in the network.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: peers
+      type: table
+
+  - name: id
+    type: function
+    desc: Returns the ID of the network instance.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: id
+      type: string
+
+  - name: closing
+    type: function
+    desc: Checks if the network instance is closing.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: closing
+      type: boolean
+
+  - name: size
+    type: function
+    desc: Returns the size (amount of peers) of the network.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: size
+      type: number
+
+  - name: current_lobby
+    type: function
+    desc: Returns the current lobby code.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: lobby
+      type: string|nil
+
+  - name: current_lobby_info
+    type: function
+    desc: Returns the current lobby information.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: lobby_info
+      type: table|nil
+
+  - name: current_leader
+    type: function
+    desc: Returns the current leader of the lobby.
+    parameters:
+    - name: instance
+      type: table
+      desc: The network instance
+    returns:
+    - name: leader
+      type: string|nil
+
+  - name: CHANNEL_RELIABLE
+    type: number
+
+  - name: CHANNEL_UNRELIABLE
+    type: number
+
+  - name: EVENT_READY
+    type: number
+    desc: The network is ready. Callback is called with the args (self)
+
+  - name: EVENT_LOBBY
+    type: number
+    desc: The lobby is created. Callback is called with the args (self, code, lobby_info)
+
+  - name: EVENT_LEADER
+    type: number
+    desc: The leader is changed. Callback is called with the args (self, leader)
+
+  - name: EVENT_LOBBY_UPDATED
+    type: number
+    desc: The lobby is updated. Callback is called with the args (self, code, settings)
+
+  - name: EVENT_CONNECTING
+    type: number
+    desc: A peer is connecting. Callback is called with the args (self, peer_id)
+
+  - name: EVENT_CONNECTED
+    type: number
+    desc: A peer is connected. Callback is called with the args (self, peer_id)
+
+  - name: EVENT_RECONNECTING
+    type: number
+    desc: A peer is reconnecting. Callback is called with the args (self, peer_id)
+
+  - name: EVENT_RECONNECTED
+    type: number
+    desc: A peer is reconnected. Callback is called with the args (self, peer_id)
+
+  - name: EVENT_DISCONNECTED
+    type: number
+    desc: A peer is disconnected. Callback is called with the args (self, peer_id)
+
+  - name: EVENT_SIGNALING_RECONNECTED
+    type: number
+    desc: The signaling connection is reconnected. Callback is called with the args (self)
+
+  - name: EVENT_FAILED
+    type: number
+    desc: The network has failed. Callback is called with the args (self)
+
+  - name: EVENT_MESSAGE
+    type: number
+    desc: A message is received. Callback is called with the args (self, peer_id, channel, data)
+
+  - name: EVENT_CLOSE
+    type: number
+    desc: The network is closed. Callback is called with the args (self, reason)
+
+  - name: EVENT_RTC_ERROR
+    type: number
+    desc: An RTC error occurred. Callback is called with the args (self, err)
+
+  - name: EVENT_SIGNALING_ERROR
+    type: number
+    desc: A signaling error occurred. Callback is called with the args (self, err)
