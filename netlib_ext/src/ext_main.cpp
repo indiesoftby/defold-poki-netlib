@@ -8,6 +8,7 @@
 extern "C"
 {
     int NetlibJS_Network_New(void (*eraseCallback)(NetlibExt::InstancePtr instanceId, NetlibExt::LuaRef fnRef, dmScript::LuaCallbackInfo* callback), const char* cGameId, const int cGameIdLen);
+    void NetlibJS_EngineStep(const double minDelta);
     // Instance methods
     void NetlibJS_Network_Close(const int instanceId, const char* cReason, const int cReasonLen);
     void NetlibJS_Network_List(const int instanceId, const char* cFilter, const int cFilterLen, void (*callback)(void* context, const char* error, const char* lobbies), const void* context);
@@ -174,6 +175,10 @@ static void DestroyContexts()
     }
     g_InstanceContexts.Clear();
 }
+
+/**
+ * Instance methods
+ */
 
 // close (reason?: string)
 static int Network_Close(lua_State* L)
@@ -907,7 +912,7 @@ static int Network_GetCurrentLeader(lua_State* L)
 }
 
 /**
- * Constructor
+ * Functions
  */
 
 static int Network_New(lua_State* L)
@@ -934,10 +939,18 @@ static int Network_New(lua_State* L)
     return 1;
 }
 
+static int EngineStep(lua_State* L)
+{
+    const double minDelta = lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+    NetlibJS_EngineStep(minDelta);
+    return 0;
+}
+
 // Functions exposed to Lua
 static const luaL_reg Ext_methods[] = {
     { "new", Network_New },
-    //
+    { "engine_step", EngineStep },
+    // Instance methods
     { "close", Network_Close },
     { "list", Network_List },
     { "create", Network_Create },
@@ -949,9 +962,8 @@ static const luaL_reg Ext_methods[] = {
     { "on", Network_On },
     { "off", Network_Off },
     { "once", Network_Once },
-
+    // Properties
     { "peers", Network_GetPeers },
-
     { "id", Network_GetId },
     { "closing", Network_GetClosing },
     { "size", Network_GetSize },

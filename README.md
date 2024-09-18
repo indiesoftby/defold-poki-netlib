@@ -37,11 +37,18 @@ function init(self)
     end)
     netlib.on(instance, netlib.EVENT_MESSAGE, function(self, peer_id, channel, data)
         print("Got", #data, "bytes from", peer_id, "via", channel, "channel")
+
+        -- Schedule a step of the Defold engine (read the explanation below)
+        netlib.engine_step(0.05)
+    end)
+    netlib.on(instance, netlib.EVENT_CONNECTING, function(self, peer_id)
+        -- Schedule a step of the Defold engine (read the explanation below)
+        netlib.engine_step(0.05)
     end)
     netlib.on(instance, netlib.EVENT_CONNECTED, function(self, peer_id)
         print("New peer connected", peer_id)
         -- Send a message to the peer
-        netlib.send(instance, peer_id, netlib.CHANNEL_RELIABLE, "Welcome!")
+        netlib.send(instance, netlib.CHANNEL_RELIABLE, peer_id, "Welcome!")
     end)
     netlib.on(instance, netlib.EVENT_DISCONNECTED, function(self, peer_id)
         print("Peer disconnected", peer_id)
@@ -52,6 +59,14 @@ function final(self)
     netlib.close(self.network)
 end
 ```
+
+## Tips & Tricks
+
+### Force a step of the engine
+
+Web game engines, including Defold, use the browser's `requestAnimationFrame()` function to organize the game loop. When the page loses focus (e.g. the player is distracted by something - for example, sending a link to a friend), browsers throttle the rAF function to 0 frames per second to save PC resources. Therefore, the game loop stops working on inactive browser tabs until the focus is restored. If this happens in a P2P networked game on the "server" side, other players will stop receiving updates to the game world state. While an inactive web page continues to receive messages from the network, which can be used to update the game world state.
+
+So, to bypass this limitation, call the `netlib.engine_step(min_delta)` function when receiving messages from the network to schedule a game loop step. `min_delta` is the minimum time between frames, in seconds. In our projects, we use a value of 0.05 seconds.
 
 ## Roadmap
 

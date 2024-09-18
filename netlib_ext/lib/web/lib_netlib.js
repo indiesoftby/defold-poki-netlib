@@ -102,6 +102,35 @@ var LibraryNetlibJS = {
                 default: return -1;
             }
         },
+
+        wrapRunner: function wrapRunner() {
+            if (NetlibJS.wrappedRunner) return;
+            if (Browser.mainLoop.runner && Browser.mainLoop.method === "rAF") {
+                NetlibJS.wrappedRunner = Browser.mainLoop.runner;
+                Browser.mainLoop.runner = function () {
+                    NetlibJS.mainLoopUpdateTime = Date.now();
+                    NetlibJS.wrappedRunner();
+                };
+            } else {
+                console.warn("Failed to wrap main loop function.");
+            }
+        }
+    },
+
+    /**
+     * Schedule a step of the Defold engine.
+     */
+    NetlibJS_EngineStep: function (minDelta) {
+        NetlibJS.wrapRunner();
+
+        const previousTime = NetlibJS.mainLoopUpdateTime || 0;
+        const now = Date.now();
+        const delta = now - previousTime;
+
+        if (minDelta * 1000 <= delta && Browser.mainLoop.func) {
+            NetlibJS.mainLoopUpdateTime = now;
+            setTimeout(Browser.mainLoop.func, 0);
+        }
     },
 
     /**

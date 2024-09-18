@@ -3,6 +3,15 @@
   desc: The Poki Networking Library for Defold
   members:
 
+  - name: engine_step
+    type: function
+    desc: Schedules a step of the Defold engine.
+    parameters:
+    - name: min_delta
+      type: number
+      desc: Minimum delta time (default 0)
+      optional: true
+
   - name: new
     type: function
     desc: Creates a new Network instance and returns a table with methods to interact with it.
